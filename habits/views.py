@@ -7,6 +7,11 @@ from rest_framework.serializers import ValidationError
 
 
 class HabitListCreateView(generics.ListCreateAPIView):
+    """
+    Представление для просмотра списка и создания привычек.
+    Доступно только аутентифицированным пользователям.
+    При просмотре отображаются только привычки текущего пользователя.
+    """
     serializer_class = HabitSerializer
     permission_classes = [IsAuthenticated]
 
@@ -21,12 +26,22 @@ class HabitListCreateView(generics.ListCreateAPIView):
 
 
 class PublicHabitListView(generics.ListAPIView):
+    """
+    Представление для просмотра списка публичных привычек.
+    Доступно только аутентифицированным пользователям.
+    Отображает все привычки, помеченные как публичные.
+    """
     serializer_class = HabitSerializer
     permission_classes = [IsAuthenticated]
     queryset = Habit.objects.filter(is_public=True)
 
 
 class HabitDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Представление для просмотра, обновления и удаления отдельной привычки.
+    Доступно только аутентифицированным пользователям.
+    Пользователь может редактировать только свои привычки, но просматривать также и публичные.
+    """
     serializer_class = HabitSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
