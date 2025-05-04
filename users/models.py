@@ -29,6 +29,13 @@ class User(AbstractUser):
         null=True,
         blank=True,
     )
+    tg_chat_id = models.CharField(
+        max_length=100,
+        verbose_name="Tелеграм чат ID",
+        help_text="Tелеграм чат ID",
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Пользователь"
