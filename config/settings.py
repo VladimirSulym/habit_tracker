@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_simplejwt",
+    "corsheaders",
     "users",
     "habits",
 ]
@@ -55,6 +56,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -156,3 +158,22 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = "users.User"
+
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8000',
+    'http://localhost:80',
+    'http://localhost',
+    'http://127.0.0.1:8000',
+    'http://51.250.20.233',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'http://localhost:80',
+    'http://localhost',
+    'http://127.0.0.1:8000',
+    'http://51.250.20.233',
+]
+
+CORS_ALLOW_ALL_ORIGINS = False
