@@ -21,7 +21,7 @@ jobs:
           pip install flake8
 
       - name: Run Flake8
-        run: flake8 --max-line-length=119 --ignore=E203,W503 --exclude=.git,__pycache__,venv,.venv,migrations lms/ users/ config/
+        run: flake8 --max-line-length=119 --ignore=E203,W503 --exclude=.git,__pycache__,venv,.venv,migrations habits/ users/ config/
 
   test:
     runs-on: ubuntu-latest
