@@ -16,7 +16,10 @@ class HabitListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Habit.objects.none()
         return Habit.objects.filter(user=self.request.user)
+
 
     def perform_create(self, serializer):
         try:
@@ -46,7 +49,12 @@ class HabitDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
     def get_queryset(self):
-        # Разрешить доступ как к собственным привычкам пользователя, так и к общественным привычкам
+        # Проверяем, является ли это запросом для генерации схемы
+        if getattr(self, 'swagger_fake_view', False):
+            # Возвращаем пустой QuerySet для схемы
+            return Habit.objects.none()
+
+        # Основная логика для реальных запросов
         return Habit.objects.filter(user=self.request.user) | Habit.objects.filter(
             is_public=True
         )

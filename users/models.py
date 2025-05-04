@@ -3,6 +3,12 @@ from django.db import models
 
 
 class User(AbstractUser):
+    """
+    Модель пользователя, расширяющая стандартную модель Django AbstractUser.
+    
+    Заменяет поле username на email в качестве основного идентификатора.
+    Добавляет дополнительные поля: телефон и город.
+    """
     username = None
     email = models.EmailField(
         unique=True,
@@ -35,6 +41,10 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     def __str__(self):
+        """
+        Возвращает строковое представление пользователя.
+        Если указаны фамилия и имя, возвращает их, иначе возвращает email.
+        """
         if self.last_name and self.first_name:
             return f"{self.last_name} {self.first_name}"
         return self.email
