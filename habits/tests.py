@@ -5,7 +5,6 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
 from unittest.mock import patch
-import datetime
 
 from habits.models import Habit
 from habits.serializers import HabitSerializer
@@ -23,44 +22,42 @@ class HabitModelTest(TestCase):
         User.objects.all().delete()
 
         self.user = User.objects.create(
-            email='test@example.com',
-            first_name='Test',
-            last_name='User'
+            email="test@example.com", first_name="Test", last_name="User"
         )
-        self.user.set_password('testpassword123')
+        self.user.set_password("testpassword123")
         self.user.save()
 
         self.habit_data = {
-            'user': self.user,
-            'place': 'Дом',
-            'date': timezone.now().date(),
-            'action': 'Пить воду',
-            'frequency': 1,
-            'execution_time': 60,
-            'reward': 'Чувствовать себя хорошо',
+            "user": self.user,
+            "place": "Дом",
+            "date": timezone.now().date(),
+            "action": "Пить воду",
+            "frequency": 1,
+            "execution_time": 60,
+            "reward": "Чувствовать себя хорошо",
         }
 
         self.habit = Habit.objects.create(**self.habit_data)
 
-        # Создание приятной привычки для тестирования связанных привычек 
+        # Создание приятной привычки для тестирования связанных привычек
         self.pleasant_habit = Habit.objects.create(
             user=self.user,
-            place='Дом',
+            place="Дом",
             date=timezone.now().date(),
-            action='Слушать музыку',
+            action="Слушать музыку",
             frequency=1,
             execution_time=60,
-            is_pleasant=True
+            is_pleasant=True,
         )
 
     def test_habit_creation(self):
         """Тест создания привычки"""
         self.assertEqual(Habit.objects.count(), 2)  # Включая приятную привычку
-        self.assertEqual(self.habit.place, self.habit_data['place'])
-        self.assertEqual(self.habit.action, self.habit_data['action'])
-        self.assertEqual(self.habit.frequency, self.habit_data['frequency'])
-        self.assertEqual(self.habit.execution_time, self.habit_data['execution_time'])
-        self.assertEqual(self.habit.reward, self.habit_data['reward'])
+        self.assertEqual(self.habit.place, self.habit_data["place"])
+        self.assertEqual(self.habit.action, self.habit_data["action"])
+        self.assertEqual(self.habit.frequency, self.habit_data["frequency"])
+        self.assertEqual(self.habit.execution_time, self.habit_data["execution_time"])
+        self.assertEqual(self.habit.reward, self.habit_data["reward"])
         self.assertEqual(self.habit.user, self.user)
 
     def test_habit_str_representation(self):
@@ -73,12 +70,12 @@ class HabitModelTest(TestCase):
         with self.assertRaises(Exception):
             Habit.objects.create(
                 user=self.user,
-                place='Дом',
+                place="Дом",
                 date=timezone.now().date(),
-                action='Бегать',
+                action="Бегать",
                 frequency=1,
                 execution_time=121,  # Больше 120 секунд
-                reward='Чувствовать себя хорошо'
+                reward="Чувствовать себя хорошо",
             )
 
     def test_habit_validation_frequency(self):
@@ -86,12 +83,12 @@ class HabitModelTest(TestCase):
         with self.assertRaises(Exception):
             Habit.objects.create(
                 user=self.user,
-                place='Дом',
+                place="Дом",
                 date=timezone.now().date(),
-                action='Бегать',
+                action="Бегать",
                 frequency=8,  # Больше 7 дней
                 execution_time=60,
-                reward='Чувствовать себя хорошо'
+                reward="Чувствовать себя хорошо",
             )
 
     def test_pleasant_habit_validation(self):
@@ -99,13 +96,13 @@ class HabitModelTest(TestCase):
         with self.assertRaises(Exception):
             Habit.objects.create(
                 user=self.user,
-                place='Дом',
+                place="Дом",
                 date=timezone.now().date(),
-                action='Смотреть ТВ',
+                action="Смотреть ТВ",
                 frequency=1,
                 execution_time=60,
                 is_pleasant=True,
-                reward='Не разрешено для приятных привычек'
+                reward="Не разрешено для приятных привычек",
             )
 
     def test_related_habit_validation(self):
@@ -113,34 +110,34 @@ class HabitModelTest(TestCase):
         # Проверка того, что связанная привычка должна быть приятной
         non_pleasant_habit = Habit.objects.create(
             user=self.user,
-            place='Дом',
+            place="Дом",
             date=timezone.now().date(),
-            action='Читать книгу',
+            action="Читать книгу",
             frequency=1,
             execution_time=60,
-            reward='Чувствовать себя хорошо'
+            reward="Чувствовать себя хорошо",
         )
 
         with self.assertRaises(Exception):
             Habit.objects.create(
                 user=self.user,
-                place='Дом',
+                place="Дом",
                 date=timezone.now().date(),
-                action='Учиться',
+                action="Учиться",
                 frequency=1,
                 execution_time=60,
-                related_habit=non_pleasant_habit  # Неприятная привычка
+                related_habit=non_pleasant_habit,  # Неприятная привычка
             )
 
         # Проверка того, что привычка может иметь приятную связанную привычку
         valid_habit = Habit.objects.create(
             user=self.user,
-            place='Дом',
+            place="Дом",
             date=timezone.now().date(),
-            action='Учиться',
+            action="Учиться",
             frequency=1,
             execution_time=60,
-            related_habit=self.pleasant_habit  # Приятная привычка
+            related_habit=self.pleasant_habit,  # Приятная привычка
         )
         self.assertEqual(valid_habit.related_habit, self.pleasant_habit)
 
@@ -149,9 +146,9 @@ class HabitModelTest(TestCase):
         with self.assertRaises(Exception):
             Habit.objects.create(
                 user=self.user,
-                place='Дом',
+                place="Дом",
                 date=timezone.now().date(),
-                action='Учиться',
+                action="Учиться",
                 frequency=1,
                 execution_time=60,
                 # Нет награды или связанной привычки
@@ -167,25 +164,25 @@ class HabitSerializerTest(TestCase):
         User.objects.all().delete()
 
         self.user = User.objects.create(
-            email='test@example.com',
+            email="test@example.com",
         )
-        self.user.set_password('testpassword123')
+        self.user.set_password("testpassword123")
         self.user.save()
 
         self.habit_data = {
-            'place': 'Дом',
-            'date': timezone.now().date().isoformat(),
-            'action': 'Пить воду',
-            'frequency': 1,
-            'execution_time': 60,
-            'reward': 'Чувствовать себя хорошо',
-            'is_public': False
+            "place": "Дом",
+            "date": timezone.now().date().isoformat(),
+            "action": "Пить воду",
+            "frequency": 1,
+            "execution_time": 60,
+            "reward": "Чувствовать себя хорошо",
+            "is_public": False,
         }
 
     def test_serializer_validation(self):
         """Тест корректности валидации данных сериализатором"""
         serializer = HabitSerializer(data=self.habit_data)
-        serializer.context['request'] = type('obj', (object,), {'user': self.user})
+        serializer.context["request"] = type("obj", (object,), {"user": self.user})
         self.assertTrue(serializer.is_valid())
 
 
@@ -198,81 +195,81 @@ class HabitViewsTest(APITestCase):
         User.objects.all().delete()
 
         self.user = User.objects.create(
-            email='test@example.com',
+            email="test@example.com",
         )
-        self.user.set_password('testpassword123')
+        self.user.set_password("testpassword123")
         self.user.save()
 
         self.other_user = User.objects.create(
-            email='other@example.com',
+            email="other@example.com",
         )
-        self.other_user.set_password('testpassword123')
+        self.other_user.set_password("testpassword123")
         self.other_user.save()
 
         self.client.force_authenticate(user=self.user)
 
         self.habit_data = {
-            'place': 'Дом',
-            'date': timezone.now().date().isoformat(),
-            'action': 'Пить воду',
-            'frequency': 1,
-            'execution_time': 60,
-            'reward': 'Чувствовать себя хорошо',
-            'is_public': False
+            "place": "Дом",
+            "date": timezone.now().date().isoformat(),
+            "action": "Пить воду",
+            "frequency": 1,
+            "execution_time": 60,
+            "reward": "Чувствовать себя хорошо",
+            "is_public": False,
         }
 
         # Создание привычки для пользователя
         self.habit = Habit.objects.create(
             user=self.user,
-            place='Дом',
+            place="Дом",
             date=timezone.now().date(),
-            action='Пить воду',
+            action="Пить воду",
             frequency=1,
             execution_time=60,
-            reward='Чувствовать себя хорошо'
+            reward="Чувствовать себя хорошо",
         )
 
         # Создание публичной привычки для другого пользователя
         self.public_habit = Habit.objects.create(
             user=self.other_user,
-            place='Тренажерный зал',
+            place="Тренажерный зал",
             date=timezone.now().date(),
-            action='Упражнения',
+            action="Упражнения",
             frequency=2,
             execution_time=30,
-            reward='Здоровье',
-            is_public=True
+            reward="Здоровье",
+            is_public=True,
         )
 
         # Создание приватной привычки для другого пользователя
         self.private_habit = Habit.objects.create(
             user=self.other_user,
-            place='Дом',
+            place="Дом",
             date=timezone.now().date(),
-            action='Читать',
+            action="Читать",
             frequency=1,
             execution_time=20,
-            reward='Знания',
-            is_public=False
+            reward="Знания",
+            is_public=False,
         )
 
     def test_habit_list_create_view(self):
         """Тест HabitListCreateView"""
-        url = reverse('habits:habit-list-create')
+        url = reverse("habits:habit-list-create")
 
         # Тест GET - должен возвращать привычки пользователя
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Тест POST - должен создать новую привычку для пользователя
-        response = self.client.post(url, self.habit_data, format='json')
+        response = self.client.post(url, self.habit_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Habit.objects.filter(user=self.user).count(), 2)
-        self.assertEqual(response.data['action'], self.habit_data['action'])
+        self.assertEqual(response.data["action"], self.habit_data["action"])
 
     def test_public_habit_list_view(self):
         """Тест PublicHabitListView"""
-        url = reverse('habits:public-habits')
+        url = reverse("habits:public-habits")
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -280,27 +277,27 @@ class HabitViewsTest(APITestCase):
     def test_habit_detail_view(self):
         """Тест HabitDetailView"""
         # Тест собственной привычки пользователя
-        url = reverse('habits:habit-detail', args=[self.habit.id])
+        url = reverse("habits:habit-detail", args=[self.habit.id])
 
         # Тест GET
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['action'], self.habit.action)
+        self.assertEqual(response.data["action"], self.habit.action)
 
         # Тест PUT
         updated_data = {
-            'place': 'Офис',
-            'date': timezone.now().date().isoformat(),
-            'action': 'Пить больше воды',
-            'frequency': 1,
-            'execution_time': 60,
-            'reward': 'Чувствовать себя лучше',
-            'is_public': False
+            "place": "Офис",
+            "date": timezone.now().date().isoformat(),
+            "action": "Пить больше воды",
+            "frequency": 1,
+            "execution_time": 60,
+            "reward": "Чувствовать себя лучше",
+            "is_public": False,
         }
-        response = self.client.put(url, updated_data, format='json')
+        response = self.client.put(url, updated_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.habit.refresh_from_db()
-        self.assertEqual(self.habit.action, 'Пить больше воды')
+        self.assertEqual(self.habit.action, "Пить больше воды")
 
         # Тест DELETE
         response = self.client.delete(url)
@@ -308,12 +305,12 @@ class HabitViewsTest(APITestCase):
         self.assertEqual(Habit.objects.filter(id=self.habit.id).count(), 0)
 
         # Тест публичной привычки другого пользователя - должна быть доступна
-        url = reverse('habits:habit-detail', args=[self.public_habit.id])
+        url = reverse("habits:habit-detail", args=[self.public_habit.id])
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Тест приватной привычки другого пользователя - не должна быть доступна
-        url = reverse('habits:habit-detail', args=[self.private_habit.id])
+        url = reverse("habits:habit-detail", args=[self.private_habit.id])
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -327,33 +324,33 @@ class HabitPermissionsTest(APITestCase):
         User.objects.all().delete()
 
         self.user = User.objects.create(
-            email='test@example.com',
+            email="test@example.com",
         )
-        self.user.set_password('testpassword123')
+        self.user.set_password("testpassword123")
         self.user.save()
 
         self.other_user = User.objects.create(
-            email='other@example.com',
+            email="other@example.com",
         )
-        self.other_user.set_password('testpassword123')
+        self.other_user.set_password("testpassword123")
         self.other_user.save()
 
         # Создание привычки для другого пользователя
         self.other_user_habit = Habit.objects.create(
             user=self.other_user,
-            place='Дом',
+            place="Дом",
             date=timezone.now().date(),
-            action='Read',
+            action="Read",
             frequency=1,
             execution_time=20,
-            reward='Знания',
-            is_public=True  # Публичная, чтобы наш пользователь мог ее видеть
+            reward="Знания",
+            is_public=True,  # Публичная, чтобы наш пользователь мог ее видеть
         )
 
     def test_owner_or_read_only_permission(self):
         """Тест разрешения IsOwnerOrReadOnly"""
         self.client.force_authenticate(user=self.user)
-        url = reverse('habits:habit-detail', args=[self.other_user_habit.id])
+        url = reverse("habits:habit-detail", args=[self.other_user_habit.id])
 
         # Тест GET - должен быть разрешен для публичных привычек
         response = self.client.get(url)
@@ -361,15 +358,15 @@ class HabitPermissionsTest(APITestCase):
 
         # Тест PUT - не должен быть разрешен для привычек других пользователей
         updated_data = {
-            'place': 'Офис',
-            'date': timezone.now().date().isoformat(),
-            'action': 'Изменено другим пользователем',
-            'frequency': 1,
-            'execution_time': 20,
-            'reward': 'Измененное вознаграждение',
-            'is_public': True
+            "place": "Офис",
+            "date": timezone.now().date().isoformat(),
+            "action": "Изменено другим пользователем",
+            "frequency": 1,
+            "execution_time": 20,
+            "reward": "Измененное вознаграждение",
+            "is_public": True,
         }
-        response = self.client.put(url, updated_data, format='json')
+        response = self.client.put(url, updated_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # Тест DELETE - не должен быть разрешен для привычек других пользователей
@@ -380,7 +377,7 @@ class HabitPermissionsTest(APITestCase):
 class HabitServicesTest(TestCase):
     """Тесты для сервисов Habit"""
 
-    @patch('habits.services.requests.get')
+    @patch("habits.services.requests.get")
     def test_send_message_telegram(self, mock_get):
         """Тест функции send_message_telegram"""
         # Настройка мока
@@ -394,6 +391,6 @@ class HabitServicesTest(TestCase):
         # Проверка, что мок был вызван с правильными параметрами
         mock_get.assert_called_once()
         args, kwargs = mock_get.call_args
-        self.assertIn('sendMessage', args[0])
-        self.assertEqual(kwargs['params']['text'], message)
-        self.assertEqual(kwargs['params']['chat_id'], chat_id)
+        self.assertIn("sendMessage", args[0])
+        self.assertEqual(kwargs["params"]["text"], message)
+        self.assertEqual(kwargs["params"]["chat_id"], chat_id)

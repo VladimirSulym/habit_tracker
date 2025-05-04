@@ -12,14 +12,14 @@ class HabitListCreateView(generics.ListCreateAPIView):
     Доступно только аутентифицированным пользователям.
     При просмотре отображаются только привычки текущего пользователя.
     """
+
     serializer_class = HabitSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        if getattr(self, 'swagger_fake_view', False):
+        if getattr(self, "swagger_fake_view", False):
             return Habit.objects.none()
         return Habit.objects.filter(user=self.request.user)
-
 
     def perform_create(self, serializer):
         try:
@@ -34,6 +34,7 @@ class PublicHabitListView(generics.ListAPIView):
     Доступно только аутентифицированным пользователям.
     Отображает все привычки, помеченные как публичные.
     """
+
     serializer_class = HabitSerializer
     permission_classes = [IsAuthenticated]
     queryset = Habit.objects.filter(is_public=True)
@@ -45,12 +46,13 @@ class HabitDetailView(generics.RetrieveUpdateDestroyAPIView):
     Доступно только аутентифицированным пользователям.
     Пользователь может редактировать только свои привычки, но просматривать также и публичные.
     """
+
     serializer_class = HabitSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
     def get_queryset(self):
         # Проверяем, является ли это запросом для генерации схемы
-        if getattr(self, 'swagger_fake_view', False):
+        if getattr(self, "swagger_fake_view", False):
             # Возвращаем пустой QuerySet для схемы
             return Habit.objects.none()
 

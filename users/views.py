@@ -8,5 +8,6 @@ class UserCreateView(generics.CreateAPIView):
     Представление для создания нового пользователя (регистрация).
     Доступно для всех пользователей без аутентификации.
     """
+
     serializer_class = UserSerializer
     permission_classes = [AllowAny]

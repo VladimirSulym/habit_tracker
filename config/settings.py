@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
-from datetime import timedelta
 from pathlib import Path
 
 from celery.schedules import crontab
@@ -47,7 +46,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "corsheaders",
     "drf_yasg",
-    'django_celery_beat',
+    "django_celery_beat",
     "users",
     "habits",
 ]
@@ -60,7 +59,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -165,28 +164,28 @@ AUTH_USER_MODEL = "users.User"
 
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:8000',
-    'http://localhost:80',
-    'http://localhost',
-    'http://127.0.0.1:8000',
-    'http://51.250.20.233',
+    "http://localhost:8000",
+    "http://localhost:80",
+    "http://localhost",
+    "http://127.0.0.1:8000",
+    "http://51.250.20.233",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:8000',
-    'http://localhost:80',
-    'http://localhost',
-    'http://127.0.0.1:8000',
-    'http://51.250.20.233',
+    "http://localhost:8000",
+    "http://localhost:80",
+    "http://localhost",
+    "http://127.0.0.1:8000",
+    "http://51.250.20.233",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False
 
 # Настройки для Celery
 # URL-адрес брокера сообщений
-CELERY_BROKER_URL = 'redis://localhost:6379' # Например, Redis, который по умолчанию работает на порту 6379
+CELERY_BROKER_URL = "redis://localhost:6379"  # Например, Redis, который по умолчанию работает на порту 6379
 # URL-адрес брокера результатов, также Redis
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
 # Часовой пояс для работы Celery
 CELERY_TIMEZONE = TIME_ZONE
 # Флаг отслеживания выполнения задач
